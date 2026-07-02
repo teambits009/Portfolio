@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Design tokens — a deliberately non-generic system:
+   warm paper, warm ink, ONE terracotta accent, hairlines.
+   Theme flips by overriding these CSS variables at runtime
+   under [data-theme="dark"], so utilities need no dark: soup.
+   ========================================================= */
+@theme {
+  --color-paper: #f7f4ee;
+  --color-paper2: #efeadf;
+  --color-surface: #fffdf8;
+  --color-ink: #1b1a16;
+  --color-ink2: #45433b;
+  --color-muted: #6d6a5f;
+  --color-line: #e4ddcf;
+  --color-line2: #d0c8b5;
+  --color-accent: #bd5a2b;
+  --color-accent-ink: #9c4319;
+  --color-accent-soft: #f4e7db;
+
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-src), ui-monospace, "SFMono-Regular", monospace;
+}
+
+[data-theme="dark"] {
+  --color-paper: #14130e;
+  --color-paper2: #1a1912;
+  --color-surface: #1e1c15;
+  --color-ink: #f0eadc;
+  --color-ink2: #cbc5b5;
+  --color-muted: #948d7d;
+  --color-line: #2c2a20;
+  --color-line2: #3b3830;
+  --color-accent: #e08a52;
+  --color-accent-ink: #eda574;
+  --color-accent-soft: #2a2016;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: "ss01", "cv05";
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-6xl px-6 md:px-10;
+  }
+}
+
+/* Marquee ticker — seamless loop via two identical tracks */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+}
+.marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+  min-width: 100%;
+  animation: marquee-scroll 34s linear infinite;
+}
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* Scroll-reveal — progressive enhancement; visible by default if JS/observer absent */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
