@@ -7,6 +7,7 @@ export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [active, setActive] = useState<string>("");
 
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme");
@@ -16,6 +17,26 @@ export default function SiteHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scroll-spy: highlight the nav link for the section crossing the viewport's upper third.
+  useEffect(() => {
+    const ids = nav.map((n) => n.href.slice(1));
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    sections.forEach((s) => io.observe(s));
+    return () => io.disconnect();
   }, []);
 
   const toggleTheme = () => {
@@ -31,15 +52,19 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+      className={`sticky top-0 z-50 border-b transition-all duration-500 ease-out ${
         scrolled
-          ? "border-line bg-paper/85 backdrop-blur-md supports-[backdrop-filter]:bg-paper/70"
+          ? "border-line bg-paper/80 backdrop-blur-md supports-[backdrop-filter]:bg-paper/70"
           : "border-transparent bg-transparent"
       }`}
     >
       <div className="wrap flex h-20 items-center justify-between gap-4">
-        <a href="#top" className="flex items-center gap-3" aria-label="Hussan Almosawi — home">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-ink font-display text-sm font-semibold text-paper">
+        <a
+          href="#top"
+          className="group flex items-center gap-3"
+          aria-label="Hussan Almosawi — home"
+        >
+          <span className="grid h-9 w-9 place-items-center rounded-md bg-ink font-display text-sm font-semibold text-paper transition-transform duration-300 group-hover:-rotate-6">
             HA
           </span>
           <span className="font-display text-[1.05rem] font-medium text-ink">
@@ -48,22 +73,34 @@ export default function SiteHeader() {
         </a>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {nav.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-3.5 py-2 font-mono text-[0.78rem] uppercase tracking-[0.12em] text-muted transition-colors hover:bg-paper2 hover:text-ink"
-            >
-              {item.label}
-            </a>
-          ))}
+          {nav.map((item) => {
+            const isActive = active === item.href.slice(1);
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "true" : undefined}
+                className={`relative rounded-full px-3.5 py-2 font-mono text-[0.78rem] uppercase tracking-[0.12em] transition-colors duration-300 hover:text-ink ${
+                  isActive ? "text-ink" : "text-muted"
+                }`}
+              >
+                {item.label}
+                <span
+                  aria-hidden
+                  className={`absolute inset-x-3.5 -bottom-0.5 h-px origin-left bg-accent transition-transform duration-300 ${
+                    isActive ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
           <button
             onClick={toggleTheme}
             aria-label="Toggle color theme"
-            className="grid h-10 w-10 place-items-center rounded-md border border-line text-muted transition-colors hover:border-accent hover:text-accent"
+            className="grid h-10 w-10 place-items-center rounded-md border border-line text-muted transition-colors duration-300 hover:border-accent hover:text-accent"
           >
             {theme === "dark" ? (
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -79,7 +116,7 @@ export default function SiteHeader() {
 
           <a
             href="#contact"
-            className="hidden rounded-full bg-ink px-5 py-2.5 font-mono text-[0.78rem] uppercase tracking-[0.12em] text-paper transition-transform hover:-translate-y-0.5 md:inline-block"
+            className="hidden rounded-full bg-ink px-5 py-2.5 font-mono text-[0.78rem] uppercase tracking-[0.12em] text-paper transition-transform duration-300 hover:-translate-y-0.5 md:inline-block"
           >
             Get in touch
           </a>
@@ -88,7 +125,7 @@ export default function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="grid h-10 w-10 place-items-center rounded-md border border-line text-ink md:hidden"
+            className="grid h-10 w-10 place-items-center rounded-md border border-line text-ink transition-colors hover:border-accent md:hidden"
           >
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
@@ -98,13 +135,16 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <nav aria-label="Mobile" className="border-t border-line bg-paper px-6 pb-4 md:hidden">
+        <nav
+          aria-label="Mobile"
+          className="origin-top border-t border-line bg-paper px-6 pb-4 [animation:menu-in_.25s_ease-out] md:hidden"
+        >
           {nav.map((item) => (
             <a
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="block border-b border-line py-3.5 font-mono text-sm uppercase tracking-[0.12em] text-ink2 last:border-none"
+              className="block border-b border-line py-3.5 font-mono text-sm uppercase tracking-[0.12em] text-ink2 transition-colors last:border-none hover:text-accent"
             >
               {item.label}
             </a>

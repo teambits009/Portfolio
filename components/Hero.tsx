@@ -21,13 +21,13 @@ export default function Hero() {
             Available for new roles — Detroit, MI · Remote-ready
           </p>
 
-          <h1 className="reveal mt-8 font-display text-[clamp(2.8rem,8vw,5.4rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-ink">
+          <h1 className="reveal mt-8 font-display text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-ink text-balance">
             Turning complex operations &amp; data into{" "}
             <span className="relative whitespace-nowrap">
               <span className="relative z-10 italic text-accent">decisions</span>
               <span
                 aria-hidden
-                className="absolute inset-x-0 bottom-1.5 z-0 h-3 bg-accent/25"
+                className="absolute inset-x-0 bottom-1 z-0 h-2.5 bg-accent/25"
               />
             </span>{" "}
             people can act on.
@@ -61,7 +61,7 @@ export default function Hero() {
             {profile.focus.map((f) => (
               <li
                 key={f}
-                className="rounded-full border border-line bg-surface px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-muted"
+                className="rounded-full border border-line bg-surface px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-muted transition-colors duration-300 hover:border-accent/60 hover:text-ink"
               >
                 {f}
               </li>

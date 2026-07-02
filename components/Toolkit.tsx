@@ -23,7 +23,7 @@ export default function Toolkit() {
                 {g.items.map((item) => (
                   <li
                     key={item}
-                    className="rounded border border-line bg-surface px-3 py-1.5 font-mono text-sm text-ink2"
+                    className="cursor-default rounded border border-line bg-surface px-3 py-1.5 font-mono text-sm text-ink2 transition-colors duration-300 hover:border-accent hover:text-ink"
                   >
                     {item}
                   </li>

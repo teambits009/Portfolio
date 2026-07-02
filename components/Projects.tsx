@@ -16,14 +16,16 @@ export default function Projects() {
           {projects.map((p) => (
             <article
               key={p.n}
-              className="reveal grid gap-6 border-b border-line py-10 md:grid-cols-[auto_1fr] md:gap-10 md:py-14"
+              className="reveal group grid gap-6 border-b border-line py-10 transition-colors duration-300 md:grid-cols-[auto_1fr] md:gap-10 md:py-14"
             >
-              <div className="font-display text-4xl leading-none text-line2 md:text-6xl">
+              <div className="font-display text-4xl leading-none text-line2 transition-colors duration-300 group-hover:text-accent md:text-6xl">
                 {p.n}
               </div>
 
               <div>
-                <h3 className="font-display text-xl text-ink md:text-2xl">{p.title}</h3>
+                <h3 className="font-display text-xl text-ink transition-colors duration-300 group-hover:text-accent-ink md:text-2xl">
+                  {p.title}
+                </h3>
                 <p className="mt-3 max-w-2xl text-ink2">{p.objective}</p>
 
                 <div className="mt-6 grid max-w-3xl gap-6 sm:grid-cols-2">
